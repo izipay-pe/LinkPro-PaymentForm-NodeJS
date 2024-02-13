@@ -1,0 +1,29 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+ul {
+  list-style-type: none; /* Quita el marcador de lista */
+  padding: 0; /* Elimina el espacio de relleno predeterminado */
+  margin: 0; /* Elimina el margen predeterminado */
+}
+
+h1 {
+  color: white;
+}
+
+hr {
+  background-color: #ccc;
+}
+
+p {
+  color: white;
+}
+
+label {
+  color: white;
+}

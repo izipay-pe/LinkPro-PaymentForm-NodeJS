@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <% include partials/_header %>
+  </head>
+  <% include partials/_navbar %>
+  <section class="container" >
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <h1>Prueba PagoLink</h1>
+        <hr>
+
+        <div class="row">
+          <div class="col-md-12">
+              <form id="paid-url" action="/" method="POST">
+                  <div class="form-group">
+                      <label for="orderId">ID del Pedido:</label>
+                      <% if (metodo === 'GET') { %>
+                        <input type="text" class="form-control" name="orderId" id="orderId" required>
+                      <% } else { %>
+                        <input type="text" class="form-control" name="orderId" id="orderId" value="<%= orderId %>" required>
+                      <% } %>
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="amount">Monto:</label>
+                      <% if (metodo === 'GET') { %>
+                        <input type="number" step="0.01" min="0" lang="en" class="form-control" name="amount" id="amount" required>
+                      <% } else { %>
+                        <input type="number" step="0.01" min="0" lang="en"  class="form-control" name="amount" id="amount" value="<%= (amount/100).toFixed(2) %>"required>
+                      <% } %>
+                  </div>
+      
+                  <div class="form-group">
+                      <label for="email">Correo del Cliente:</label>
+                      <% if (metodo === 'GET') { %>
+                        <input type="email" class="form-control" name="email" id="email" required>
+                      <% } else { %>
+                        <input type="email" class="form-control" name="email" id="email" value="<%= email %>" required>
+                      <% } %>
+                  </div>
+                  <div class="form-check">
+                      <% if (metodo === 'GET') { %>
+                        <input type="checkbox" class="form-check-input" name="enviarCorreo" id="enviarCorreo"> 
+                      <% } else { %> 
+                        <input type="checkbox" class="form-check-input" name="enviarCorreo" id="enviarCorreo" <% if (check) { %>checked<% } %>> 
+                      <% } %>
+                      <label class="form-check-label" for="enviarCorreo">Enviar correo</label>
+                  </div>
+                  <br>
+                  <div class="text-center">
+                    <button class="btn btn-primary" type="submit" id="submitButton">Generar Link de Pago</button>
+                  </div>
+              </form>
+              <% if (metodo === 'POST') { %>
+                <form id="paid-url" action="/link" method="POST" target="_blank">
+                  <div class="form-group">
+                    <label for="urlLink">URL:</label>
+                    <input type="text" class="form-control" name="urlLink" id="urlLink" value="<%= url %>">
+                    <br>
+                    <div class="text-center">
+                      <button class="btn btn-primary" type="submit" id="abrirLink">Abrir link</button>
+                    </div>
+                  </div>
+                </form>
+              <% } %>
+          </div>
+      </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </section>
+  <% include partials/_footer %>
+</html>
