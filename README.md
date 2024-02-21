@@ -53,10 +53,10 @@ npm start
 ## 5. Transacción de prueba
 Antes de poner en marcha su pasarela de pago en un entorno de producción, es esencial realizar pruebas para garantizar su correcto funcionamiento. 
 
-Puede intentar realizar una transacción utilizando una tarjeta de prueba con la barra de herramientas de depuración (en la parte inferior de la página).
+Puede intentar realizar una transacción utilizando una tarjeta de prueba (en la parte inferior del formulario).
 
 <p align="center">
-  <img src="https://i.postimg.cc/3xXChGp2/tarjetas-prueba.png" alt="Formulario"/>
+  <img src="https://i.postimg.cc/d0ztyMG2/Tarjetas.png" alt="Formulario"/>
 </p>
 
 * También puede encontrar tarjetas de prueba en el siguiente enlace. [Tarjetas de prueba](https://secure.micuentaweb.pe/doc/es-PE/rest/V4.0/api/kb/test_cards.html)
