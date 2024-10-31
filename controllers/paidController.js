@@ -19,52 +19,28 @@ controller.openLink = (req, res) => {
     res.redirect(url);
 }
 
-controller.paidResult = (req, res) => {
-    console.log(req.body);
-    const vadsResult = req.body.vads_result;
-    const vadsTransStatus = req.body.vads_trans_status;
-    const vadsAmount = req.body.vads_amount;
-    const vadsOrder = req.body.vads_order_id;
-
-    res.status(200).render("result", { 'result' : vadsResult, 'status': vadsTransStatus, 'monto': vadsAmount, 'order': vadsOrder});
-}
-
-controller.ipn = (req, res) => {
-    const answer = JSON.parse(req.body["kr-answer"])
-    const hash = req.body["kr-hash"]
-
-    const answerHash = Hex.stringify(
-        hmacSHA256(JSON.stringify(answer), keys.password)
-    )
-    console.log('IPN');
-    console.log(answer);
-    console.log('Codigo Hash: ' + answerHash);
-
-    if (hash === answerHash){
-        res.status(200).send({'response' : answer.orderStatus })
-    }
-    else {
-        res.status(500).send( {'response' : 'Es probable un intento de fraude'})
-    }
-}
-
 controller.paidUrl = async (req, res) => {
     const amount = parseFloat(req.body.amount) * 100;
     const orderId = req.body.orderId;
     const email = req.body.email;
+    const date = req.body.date;
+    const time = req.body.time;
     
+    const [year, month, day] = date.split("-");
+    const [hours, minutes] = time.split(":");
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:00-05:00`;
+
     var channelType = "" 
     var check = req.body.enviarCorreo === 'on'
+
     if (check){
         channelType = "MAIL"
-        console.log("mail");
     }else{
         channelType = "URL"
-        console.log("url");
     }
 
     url = 'https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePaymentOrder';
-    const auth = 'Basic ' + btoa(username + ':' + password); 
+    const auth = 'Basic ' + btoa(username + ':' + password);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -74,11 +50,12 @@ controller.paidUrl = async (req, res) => {
     // Datos de la compra
     const data = {
         "amount":   amount,
-        "cancelUrl": "https://mlxmn83f-3000.brs.devtunnels.ms/result",
-        "successUrl": "https://mlxmn83f-3000.brs.devtunnels.ms/result",
+        "cancelUrl": "http://localhost:3000/result",
+        "successUrl": "http://localhost:3000/result",
         "returnMode": "POST",
         "currency": "PEN",
         "orderId":  orderId,
+        "expirationDate": formattedDateTime,
         "channelOptions": {
             "mailOptions": {
               "subject": "Pago",
@@ -97,13 +74,38 @@ controller.paidUrl = async (req, res) => {
       });
 
     if (response.data.status == 'SUCCESS'){
-        console.log(response.data.status);
         const url = response.data.answer.paymentURL;
         console.log(url);
-        res.render('index', {  title: 'Demo NodeJS', metodo: 'POST' , orderId: orderId, amount: amount, email: email, check: check, url:url});
+        res.render('index', {  title: 'Demo NodeJS', metodo: 'POST' , orderId: orderId, amount: amount, email: email, date: date, time: time, check: check, url:url});
     }else{
         console.error(response.data);
-        res.status(500).send('error');
+        res.render('error', { status: response.data.status, message: response.data.answer.detailedErrorMessage});
+    }
+}
+
+controller.paidResult = (req, res) => {
+    const vadsResult = req.body.vads_result;
+    const vadsTransStatus = req.body.vads_trans_status;
+    const vadsAmount = req.body.vads_amount;
+    const vadsOrder = req.body.vads_order_id;
+
+    res.status(200).render("result", { 'result' : vadsResult, 'status': vadsTransStatus, 'monto': vadsAmount, 'order': vadsOrder});
+}
+
+controller.ipn = (req, res) => {
+    console.log(req.body);
+    const answer = JSON.parse(req.body["kr-answer"])
+    const hash = req.body["kr-hash"]
+
+    const answerHash = Hex.stringify(
+        hmacSHA256(JSON.stringify(answer), keys.password)
+    )
+
+    if (hash === answerHash){
+        res.status(200).send({'response' : answer.orderStatus })
+    }
+    else {
+        res.status(500).send( {'response' : 'Es probable un intento de fraude'})
     }
 }
 
